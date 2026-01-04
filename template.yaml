@@ -32,7 +32,35 @@ Resources:
             Action: 's3:GetObject'
             Resource: !Sub 'arn:aws:s3:::${MyPortfolioBucket}/*'
 
+  MyCloudFront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        DefaultCacheBehavior: 
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          DefaultTTL: 60
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true  
+        Origins:
+          - Id: S3Origin
+            DomainName: !Select [2, !Split ['/', !GetAtt MyPortfolioBucket.WebsiteURL]]
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+        
 Outputs:
   WebsiteURL:
     Value: !GetAtt MyPortfolioBucket.WebsiteURL
     Description: URL for website hosted on S3
+  CloudFrontURL:
+    Value: !Sub 'https://${MyCloudFront.DomainName}'
+    Description: Secure URL via CloudFront
