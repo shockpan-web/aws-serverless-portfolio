@@ -98,7 +98,6 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: '*'
-
   MyVisitorCounterFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -106,13 +105,19 @@ Resources:
       Runtime: python3.9
       Handler: index.lambda_handler
       Role: !GetAtt MyLambdaRole.Arn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DBName
       Code:
         ZipFile: |
           import json
           import boto3
+          import os
+
+          table_name = os.environ['TABLE_NAME']
           
           dynamodb = boto3.resource('dynamodb')
-          table = dynamodb.Table('PortfolioVisitorCount')
+          table = dynamodb.Table(table_name)
           
           def lambda_handler(event, context):
               response = table.update_item(
