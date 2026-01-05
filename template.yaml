@@ -138,7 +138,52 @@ Resources:
                   },
                   'body': json.dumps({'count': visitor_count})
               }
-    
+
+  MyApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: PortfolioApi
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  MyApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MyApi
+      ParentId: !GetAtt MyApi.RootResourceId
+      PathPart: count
+
+  MyApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref MyApi
+      ResourceId: !Ref MyApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
+          - LambdaArn: !GetAtt MyVisitorCounterFunction.Arn
+
+  MyApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: MyApiMethod
+    Properties:
+      RestApiId: !Ref MyApi
+      StageName: prod
+
+  MyLambdaPermissionForApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref MyVisitorCounterFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MyApi}/*/*/*
+
+
 Outputs:
   WebsiteURL:
     Value: !GetAtt MyPortfolioBucket.WebsiteURL
@@ -146,3 +191,6 @@ Outputs:
   CloudFrontURL:
     Value: !Sub 'https://${MyCloudFront.DomainName}'
     Description: Secure URL via CloudFront
+  ApiEndpoint:
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/prod/count"
+    Description: URL for visitor counter API  

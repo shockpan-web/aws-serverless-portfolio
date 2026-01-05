@@ -7,7 +7,26 @@
 </head>
 <body>
     <h1>ようこそ！私のポートフォリオへ</h1>
+    <p>訪問者数: <span id="counter">読み込み中...</span> 人</p>
     <p>AWSサーバーレス構成で構築中のサイトです。</p>
     <p>現在、S3で静的ホスティングを実践中です。</p>
 </body>
+<script>
+  // あなたのAPIのURLをここに貼る
+  const apiUrl = "https://jaj565kbe7.execute-api.us-east-1.amazonaws.com/prod/count";
+
+  // APIからデータを取得する
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      // 画面の数字を書き換える
+      document.getElementById('counter').innerText = data.count;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('counter').innerText = "エラー";
+    });
+</script>
+</body>
+</html>
 </html>
