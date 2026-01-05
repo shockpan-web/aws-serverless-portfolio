@@ -91,7 +91,7 @@ Resources:
                   - dynamodb:GetItem
                   - dynamodb:UpdateItem
                   - dynamodb:PutItem
-                Resource: !GetAtt MyDynamoDBTable.Arn
+                Resource: !GetAtt MyDynamoTable.Arn
               - Effect: Allow
                 Action:
                   - logs:CreateLogGroup
