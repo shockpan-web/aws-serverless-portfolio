@@ -1,47 +1,46 @@
 # AWS Serverless Portfolio Project
 
-AWSのサーバーレスアーキテクチャを用いて構築した、個人のポートフォリオサイト（Web履歴書）プロジェクトです。
-未経験からクラウドエンジニアへの転職を目指し、AWSのベストプラクティスを意識した「コスト効率」「セキュリティ」「自動化」を重視した構成で開発しています。
+AWS CloudFormation (IaC) を使用して構築した、サーバーレスアーキテクチャのポートフォリオサイトです。
+静的Webサイトのホスティングから、訪問者数カウンター（バックエンドAPI）までをすべてコードで管理・自動構築しています。
 
-## 🚀 プロジェクトの目的
-- 静的WebサイトホスティングからバックエンドAPI構築まで、フルスタックなAWS構築経験を積むこと。
-- コンソール操作だけでなく、IaCやCI/CDを用いた現代的な開発フローを習得すること。
-- **The Cloud Resume Challenge** をベースとした実践的な課題解決。
+## 🏗 Architecture
 
-## 🏗 アーキテクチャ構成（予定）
+### Frontend
+- **Amazon S3**: 静的ウェブサイトホスティング（HTML/CSS/JSの配置）
+- **Amazon CloudFront**: CDNによる高速配信とHTTPS化（SSL/TLS終端）
 
-以下の構成で開発を進めています。
+### Backend
+- **Amazon API Gateway**: REST APIのエンドポイント提供
+- **AWS Lambda (Python)**: DynamoDBへのアクセスロジック、環境変数による疎結合設計
+- **Amazon DynamoDB**: 訪問者数のカウントデータ（NoSQL）、オンデマンドモード
 
-![Architecture Diagram](https://img.shields.io/badge/Architecture-Serverless-orange)
-*(※ここに後ほど構成図の画像を貼ります)*
+## 🚀 Features
 
-1. **Frontend**: Amazon S3 (静的ホスティング) + Amazon CloudFront (CDN/HTTPS化)
-2. **Backend**: AWS Lambda (Python) + Amazon DynamoDB (NoSQL)
-3. **API**: Amazon API Gateway
-4. **CI/CD**: GitHub Actions (フロントエンド/バックエンドの自動デプロイ)
-5. **Infrastructure**: Terraform (予定)
+- **Infrastructure as Code (IaC)**: すべてのリソースを `template.yaml` 一つで定義・管理。
+- **Serverless**: サーバー管理不要のマネージドサービスのみで構成し、ランニングコストを最適化。
+- **HTTPS & CDN**: CloudFrontを使用したセキュアで高速なコンテンツ配信。
+- **Atomic Counter**: DynamoDBのアトミック操作を使用した、整合性の取れたアクセスカウンター。
+- **CORS Support**: 異なるドメイン（CloudFront -> API Gateway）間の通信を許可する適切なヘッダー設定。
 
-## 🛠 使用技術・ツール
+---
 
-- **Cloud Provider**: AWS
-- **Frontend**: HTML5, CSS3, JavaScript
-- **Backend**: Python (Boto3)
-- **Database**: DynamoDB
-- **CI/CD**: GitHub Actions
-- **Version Control**: Git / GitHub
+## 📚 Technical Deep Dive (学習メモ)
 
-## 📝 進捗状況 (Roadmap)
+プロジェクト構築中に直面した課題や、技術的な詳細についての解説メモです。
 
-- [ ] **Phase 1**: S3バケットによる静的ウェブサイトの公開
-- [ ] **Phase 2**: CloudFront + Route53によるHTTPS化・カスタムドメイン設定
-- [ ] **Phase 3**: DynamoDBとLambdaによる訪問者カウンターの実装
-- [ ] **Phase 4**: API Gatewayとフロントエンドの統合
-- [ ] **Phase 5**: GitHub ActionsによるCI/CDパイプライン構築
+### 1. CloudFormation & YAML
+- **YAMLのインデント**: リストやプロパティの階層構造（スペースの数）が厳密に求められる。特に `Policies` や `Resources` のネストでエラーになりやすい。
+- **組み込み関数**:
+  - `!Ref`: パラメータやリソースの物理IDを参照。
+  - `!GetAtt`: リソースの属性（ARNやURLなど）を取得。
+  - `!Sub`: 変数を文字列の中に埋め込む。
+  - `!Split` / `!Select`: S3のURLからドメイン名だけを抽出する際など、文字列操作に使用。
 
-## 🔗 リンク
-- 公開サイトURL: (後ほど記載)
-
-## 👨‍💻 Author
-**Automotive Engineering Manager | CS Master's Degree**
-* Currently based in USA (Global Assignment).
-* Bridging the gap between Automotive Engineering and Cloud/SDV technologies.
+### 2. AWS CLI & JMESPath
+AWS CLIの出力結果から特定の値を抽出するために **JMESPath** を使用。
+例：作成されたAPIのURLを取得するコマンド
+```bash
+aws cloudformation describe-stacks \
+    --stack-name MyPortfolioStack \
+    --query "Stacks[0].Outputs[?OutputKey=='ApiEndpoint'].OutputValue" \
+    --output text
