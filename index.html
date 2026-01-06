@@ -4,29 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Cloud Portfolio</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem 3rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+        }
+        .counter-box {
+            background-color: #e8f0fe;
+            color: #1967d2;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            display: inline-block;
+        }
+        .loading {
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
-    <h1>ようこそ！私のポートフォリオへ</h1>
-    <p>訪問者数: <span id="counter">読み込み中...</span> 人</p>
-    <p>AWSサーバーレス構成で構築中のサイトです。</p>
-    <p>現在、S3で静的ホスティングを実践中です。</p>
-</body>
-<script>
-  // あなたのAPIのURLをここに貼る
-  const apiUrl = "https://jaj565kbe7.execute-api.us-east-1.amazonaws.com/prod/count";
 
-  // APIからデータを取得する
-  fetch(apiUrl)
-    .then(response => response.json())
-    .then(data => {
-      // 画面の数字を書き換える
-      document.getElementById('counter').innerText = data.count;
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      document.getElementById('counter').innerText = "エラー";
-    });
-</script>
+    <div class="container">
+        <h1>Welcome to My Portfolio</h1>
+        <p>AWS CloudFormationで構築された<br>サーバーレス・ウェブサイトへようこそ。</p>
+        
+        <div class="counter-box">
+            訪問者数: <span id="counter" class="loading">読み込み中...</span>
+        </div>
+
+        <p style="margin-top: 2rem; font-size: 0.8rem; color: #888;">
+            Architecture: S3, CloudFront, API Gateway, Lambda, DynamoDB
+        </p>
+    </div>
+
+    <script>
+        // ★ここにあなたのAPI GatewayのURLを貼り付けてください！
+        const apiUrl = "https://jaj565kbe7.execute-api.us-east-1.amazonaws.com/prod/count";
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const counterElement = document.getElementById('counter');
+                counterElement.innerText = data.count + " 人";
+                counterElement.classList.remove('loading');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('counter').innerText = "エラー";
+            });
+    </script>
+
 </body>
-</html>
 </html>
