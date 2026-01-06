@@ -5,6 +5,8 @@ AWS CloudFormation (IaC) を使用して構築した、サーバーレスアー�
 
 ## 🏗 Architecture
 
+![AWS Serverless Architecture](./system.png)
+
 ### Frontend
 - **Amazon S3**: 静的ウェブサイトホスティング（HTML/CSS/JSの配置）
 - **Amazon CloudFront**: CDNによる高速配信とHTTPS化（SSL/TLS終端）
