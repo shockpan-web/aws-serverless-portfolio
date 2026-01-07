@@ -29,14 +29,15 @@ jobs:
           aws cloudformation deploy \
             --template-file template.yaml \
             --stack-name MyPortfolioStack \
-            --parameter-overrides PortfolioBucketName=porfolio-mitsuhirodemura-2026 \
-            --capabilities CAPABILITY_NAMED_IAM
+            --parameter-overrides PortfolioBucketName=portfolio-mitsuhirodemura-2026 \
+            --parameter-overrides DBName=portfolio-mitsuhiro-demura-2026-db \
+            --capabilities CAPABILITY_NAMED_IAM \
         # ↑ ★重要: 上のBucketNameをあなたのバケット名に書き換えてください！
 
       # 2. フロントエンドのアップロード (S3更新)
       - name: Upload to S3
         run: |
-          aws s3 cp index.html s3://porfolio-mitsuhirodemura-2026/
+          aws s3 cp index.html s3://portfolio-mitsuhirodemura-2026/
         # ↑ ★重要: ここもあなたのバケット名に書き換えてください！
 
       # 3. キャッシュ削除 (反映)
