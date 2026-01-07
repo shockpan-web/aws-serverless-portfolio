@@ -29,8 +29,9 @@ jobs:
           aws cloudformation deploy \
             --template-file template.yaml \
             --stack-name MyPortfolioStack \
-            --parameter-overrides PortfolioBucketName=portfolio-mitsuhirodemura-2026 \
-            --parameter-overrides DBName=portfolio-mitsuhiro-demura-2026-db \
+            --parameter-overrides \
+              PortfolioBucketName=portfolio-mitsuhirodemura-2026 \
+              DBName=portfolio-mitsuhiro-demura-2026-db \
             --capabilities CAPABILITY_NAMED_IAM \
         # ↑ ★重要: 上のBucketNameをあなたのバケット名に書き換えてください！
 
