@@ -1,28 +1,40 @@
-# AWS Serverless Portfolio Project
+# Serverless Portfolio on AWS
 
-AWS CloudFormation (IaC) を使用して構築した、サーバーレスアーキテクチャのポートフォリオサイトです。
-静的Webサイトのホスティングから、訪問者数カウンター（バックエンドAPI）までをすべてコードで管理・自動構築しています。
+AWS CloudFormation を用いて構築した、完全サーバーレスアーキテクチャのポートフォリオサイトです。
+インフラのコード化 (IaC) から CI/CD パイプラインによる自動デプロイまで、モダンな開発フローを採用しています。
 
-## 🏗 Architecture
+## 🏗 Architecture (構成図)
 
-![AWS Serverless Architecture](./architecture.png)
+![Architecture Diagram](./architecture.png)
 
-### Frontend
-- **Amazon S3**: 静的ウェブサイトホスティング（HTML/CSS/JSの配置）
-- **Amazon CloudFront**: CDNによる高速配信とHTTPS化（SSL/TLS終端）
+### データの流れ
+1.  **Frontend**: ユーザーは **Amazon CloudFront** (CDN) 経由で **S3** 上の静的サイトにアクセスします (HTTPS)。
+2.  **Backend**: サイト内のJavaScriptが **API Gateway** を呼び出します。
+3.  **Compute**: **AWS Lambda** (Python) がリクエストを処理し、**DynamoDB** の訪問者カウンターを更新・取得します。
+4.  **DevOps**: **GitHub Actions** により、コードをプッシュするだけでインフラとアプリケーションが自動デプロイされます。
 
-### Backend
-- **Amazon API Gateway**: REST APIのエンドポイント提供
-- **AWS Lambda (Python)**: DynamoDBへのアクセスロジック、環境変数による疎結合設計
-- **Amazon DynamoDB**: 訪問者数のカウントデータ（NoSQL）、オンデマンドモード
+## 🛠 Tech Stack (使用技術)
 
-## 🚀 Features
+| Category | Technology |
+| --- | --- |
+| **Infrastructure** | AWS CloudFormation (IaC) |
+| **Frontend** | HTML5, CSS3, JavaScript, Amazon S3, Amazon CloudFront |
+| **Backend** | AWS Lambda (Python), Amazon API Gateway |
+| **Database** | Amazon DynamoDB |
+| **CI/CD** | GitHub Actions |
+| **Security** | IAM (Least Privilege), OAC (Origin Access Control) |
 
-- **Infrastructure as Code (IaC)**: すべてのリソースを `template.yaml` 一つで定義・管理。
-- **Serverless**: サーバー管理不要のマネージドサービスのみで構成し、ランニングコストを最適化。
-- **HTTPS & CDN**: CloudFrontを使用したセキュアで高速なコンテンツ配信。
-- **Atomic Counter**: DynamoDBのアトミック操作を使用した、整合性の取れたアクセスカウンター。
-- **CORS Support**: 異なるドメイン（CloudFront -> API Gateway）間の通信を許可する適切なヘッダー設定。
+## 🚀 Features (特徴)
+
+* **Infrastructure as Code (IaC)**: サーバー構成、ネットワーク、権限周りをすべてYAMLコードで管理。
+* **Serverless**: サーバー管理不要のフルマネージドサービスのみで構成し、ランニングコストを最小化。
+* **CI/CD Pipeline**: GitHubへのPushをトリガーに、AWSへのデプロイを完全自動化。
+* **Visitor Counter**: LambdaとDynamoDBのアトミックカウンタを使用した、スケーラブルなアクセスカウンター機能。
+
+## 👤 Author
+
+* **[Mitsuhiro Demura]**
+* GitHub: [@shockpan-web]
 
 ---
 
