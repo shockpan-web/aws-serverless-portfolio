@@ -33,6 +33,5 @@ jobs:
 
       - name: Invalidate CloudFront cache
         run: |
-          # CloudFrontのIDを自動取得してキャッシュ削除
           DIST_ID=$(aws cloudformation describe-stack-resource --stack-name MyPortfolioStack --logical-resource-id MyCloudFront --query "StackResourceDetail.PhysicalResourceId" --output text)
           aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
